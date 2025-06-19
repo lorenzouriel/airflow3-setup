@@ -1,7 +1,9 @@
-# Dockerfile
+# Image: Apache Airflow with Python dependencies
+# This Dockerfile builds an Apache Airflow image with additional Python dependencies.
 FROM apache/airflow:3.0.0
 
-# Instala as dependências de sistema necessárias para python-ldap
+# Install dependencies for building Python packages
+# Use the root user to install system dependencies
 USER root
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -13,19 +15,14 @@ RUN apt-get update && apt-get install -y \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-# Troca para o usuário airflow para instalar Python packages
+# Change to airflow user for subsequent commands
 USER airflow
 
-# Copia os requirements para dentro da imagem
+# Copy the requirements file
+# This file should be in the same directory as the Dockerfile
 COPY requirements.txt /requirements.txt
 
-# Instala os requisitos Python
-RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir -r /requirements.txt
-
-# Copia os patches (arquivos corrigidos)
-USER root
-ENV SITE_PACKAGES_DIR=/home/airflow/.local/lib/python3.12/site-packages
-COPY --chown=airflow:airflow ./airflow-patch/ ${SITE_PACKAGES_DIR}/
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /requirements.txt --verbose
 
 USER airflow

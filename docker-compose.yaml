@@ -1,6 +1,8 @@
 x-airflow-common:
   &airflow-common
-  build: .
+  build:
+    context: .
+    dockerfile: Dockerfile
   image: airflow-patch-image:3.0.0
   env_file:
     - .env
@@ -10,17 +12,18 @@ x-airflow-common:
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres}/${POSTGRES_DB}
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-postgres}/${POSTGRES_DB}
-    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__EXECUTION_API_SERVER_URL: 'http://airflow-apiserver:8080/execution/'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET}
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
-    AIRFLOW__METRICS__STATSD_ON: "True"
-    AIRFLOW__METRICS__STATSD_HOST: "statsd-exporter"
-    AIRFLOW__METRICS__STATSD_PORT: "9125"
-    AIRFLOW__METRICS__STATSD_PREFIX: "airflow"
-    AIRFLOW__METRICS__STATSD_PLUGIN_CLASS: 'airflow.providers.prometheus.metrics.prometheus_statsd_exporter.PrometheusStatsdExporter'
+    # AIRFLOW__METRICS__STATSD_ON: "True"
+    # AIRFLOW__METRICS__STATSD_HOST: "statsd-exporter"
+    # AIRFLOW__METRICS__STATSD_PORT: "9125"
+    # AIRFLOW__METRICS__STATSD_PREFIX: "airflow"
+    # AIRFLOW__METRICS__STATSD_PLUGIN_CLASS: 'airflow.providers.prometheus.metrics.prometheus_statsd_exporter.PrometheusStatsdExporter'
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
@@ -157,60 +160,7 @@ services:
       - airflow
     depends_on:
       <<: *airflow-common-depends-on
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus-dev
-    ports:
-      - "9090:9090"
-    # volumes:
-    #   - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-    restart: always
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana-prod
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASS}
-      - GF_PATHS_PROVISIONING=/grafana/provisioning
-    ports:
-      - "3000:3000"
-    volumes:
-      - airflow-grafana-data:/var/lib/grafana
-    depends_on:
-      - prometheus
-    restart: always
-    
-  statsd-exporter:
-    image: prom/statsd-exporter
-    ports:
-      - "9125:9125/udp"   # Porta padrão do StatsD
-      - "9102:9102"       # Exposição das métricas para Prometheus
-    # volumes:
-    # #   - ./statsd/statsd.yml:/etc/statsd_exporter_mapping.yaml
-    # command:
-    #   - "--statsd.mapping-config=/etc/statsd_exporter_mapping.yaml"
-
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter
-    environment:
-      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
-    ports:
-      - "9187:9187"
-    depends_on:
-      - postgres
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    ports:
-      - "2181:2181"
-
+  
 volumes:
   airflow-metabase-volume:
-    driver: local
-  airflow-grafana-data:
-    driver: local
-  grafana-provisions:
     driver: local

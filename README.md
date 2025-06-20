@@ -15,6 +15,6 @@ cd airflow3-setup
 * Feel free to fork or reuse any part of this setup as a starting point for your own Airflow projects.
 
 ## Inspirations
-The setup is part of a lot of content and codes that I take from the community:
+The setup is part of a lot of content and code I get from the community:
 - https://github.com/matsudan/airflow-dag-examples
 - https://github.com/FabioCantarimM/airflow3

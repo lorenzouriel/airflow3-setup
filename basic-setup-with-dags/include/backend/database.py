@@ -28,7 +28,7 @@ def get_stocks():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT id, ticker, name, currency, created_at FROM investment.stocks;')
+        cursor.execute('SELECT id, ticker, name, currency, created_at FROM dbo.stocks;')
         stocks = cursor.fetchall()
         cursor.close()
         conn.close()
@@ -52,7 +52,7 @@ def post_stock_data(stock_id, ticker, period):
 
         for date, row in historical_data.iterrows():
             query = """
-                INSERT INTO investment.stock_data (stock_id, [date], open_price, close_price, high_price, low_price, volume, created_at)
+                INSERT INTO dbo.stock_data (stock_id, [date], open_price, close_price, high_price, low_price, volume, created_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """
             values = (

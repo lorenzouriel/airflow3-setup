@@ -1,14 +1,13 @@
-import yfinance as yf
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from .backend.database import get_stocks, post_stock_data
+from backend.database import get_stocks, post_stock_data
 
 load_dotenv()
 
 def load_stock_daily():
     """
-    Fetches daily stock data for all the stocks in the database and inserts it into the investment.stock_data table.
+    Fetches daily stock data for all the stocks in the database and inserts it into the dbo.stock_data table.
     """
     stocks = get_stocks()
 

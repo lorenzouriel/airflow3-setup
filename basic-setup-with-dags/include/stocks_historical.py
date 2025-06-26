@@ -1,14 +1,13 @@
-import yfinance as yf 
 import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from .backend.database import get_stocks, post_stock_data
+from backend.database import get_stocks, post_stock_data
 
 load_dotenv()
 
 def load_stock_historical():
     """
-    Fetches historical stock data for all the stocks in the database and inserts it into the investment.stock_data table.
+    Fetches historical stock data for all the stocks in the database and inserts it into the dbo.stock_data table.
     Only loads historical data if created_at is within the last 24 hours.
     """
     stocks = get_stocks()
@@ -17,11 +16,9 @@ def load_stock_historical():
         stock_id, ticker, name, currency, created_at = stock
         print(f"Checking data for {ticker} ({name})...")
 
-        created_at_datetime = datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S') 
-
         current_time = datetime.now()
 
-        if current_time - created_at_datetime <= timedelta(days=1):
+        if current_time - created_at <= timedelta(days=1):
             print(f"Loading historical data for {ticker} ({name})...")
             post_stock_data(stock_id, ticker, period="1y")
         else:

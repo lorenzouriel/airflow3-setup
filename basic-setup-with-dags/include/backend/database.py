@@ -6,11 +6,19 @@ import pyodbc
 
 load_dotenv()
 
+# DB_CONFIG = {
+#     'server': os.getenv('DB_SERVER') or '.',
+#     'database': os.getenv('DB_NAME') or 'fin_pulse',
+#     'username': os.getenv('DB_USER') or 'lorenzo.uriel',
+#     'password': os.getenv('DB_PASSWORD') or 'Lukaku@2022',
+#     'driver': '{ODBC Driver 17 for SQL Server}'
+# }
+
 DB_CONFIG = {
-    'server': os.getenv('DB_SERVER') or 'localhost',
-    'database': os.getenv('DB_NAME'),
-    'username': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
+    'server': '.',
+    'database': 'fin_pulse',
+    'username': 'lorenzo.uriel',
+    'password': 'Lukaku@2022',
     'driver': '{ODBC Driver 17 for SQL Server}'
 }
 

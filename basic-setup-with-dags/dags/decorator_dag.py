@@ -1,13 +1,17 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from airflow.decorators import task, dag
-from include.load_stock_daily import load_stock_daily
-from include.load_stock_historical import load_stock_historical
+from include.stocks_daily import load_stock_daily
+from include.stocks_historical import load_stock_historical
 from datetime import datetime
 
 @dag(
     dag_id="stocks-daily",
     description="Pipeline to run historical and daily stock data loading tasks",
     start_date=datetime(2025, 1, 10),
-    schedule_interval="0 0 * * *", 
+    schedule="0 0 * * *",  # ✅ corrigido
     catchup=False
 )
 def stocks_data():

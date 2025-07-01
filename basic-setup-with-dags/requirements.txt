@@ -1,0 +1,17 @@
+apache-airflow[statsd]==3.0.0
+airflow-provider-duckdb==0.1.0
+apache-airflow-providers-postgres==5.13.1
+apache-airflow-providers-common-sql==1.26.0
+apache-airflow-providers-fab[common.compat]==2.0.2
+apache-airflow-providers-apache-kafka==1.9.0
+
+astronomer-cosmos==1.10.1
+
+authlib==1.5.2
+python-ldap==3.4.4
+asgiref==3.8.1
+
+yfinance==0.2.51
+pyodbc>=5.2.0
+requests>=2.32.4
+dotenv>=0.9.9

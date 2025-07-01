@@ -1,11 +1,12 @@
 import os
+import requests
 from dotenv import load_dotenv
-import yfinance as yf
 from datetime import datetime
 import pyodbc
 
 load_dotenv()
 
+# Database configuration loaded from environment variables
 DB_CONFIG = {
     'server': os.getenv('DB_SERVER'),
     'database': os.getenv('DB_NAME'),
@@ -15,6 +16,12 @@ DB_CONFIG = {
 }
 
 def get_db_connection():
+    """
+    Establishes and returns a connection to the SQL Server database using the ODBC driver.
+
+    Returns:
+        pyodbc.Connection: A connection object to interact with the database.
+    """
     conn_str = (
         f"DRIVER={DB_CONFIG['driver']};"
         f"SERVER={DB_CONFIG['server']};"
@@ -25,48 +32,92 @@ def get_db_connection():
     return pyodbc.connect(conn_str)
 
 def get_stocks():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('SELECT id, ticker, name, currency, created_at FROM dbo.stocks;')
-        stocks = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return stocks
-    except pyodbc.Error as e:
-        print(f"Error connecting or querying the database: {e}")
-        return []
+    """
+    Retrieves all stocks from the dbo.stocks table.
+
+    Returns:
+        list of pyodbc.Row: List containing stock records with fields (id, ticker, name, currency, created_at).
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, ticker, name, currency, created_at FROM dbo.stocks;')
+    stocks = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return stocks
+
+def fetch_yahoo_data(ticker, range_='1y', interval='1d'):
+    """
+    Fetches historical stock data from Yahoo Finance for a given ticker symbol.
+
+    Args:
+        ticker (str): The stock ticker symbol to query.
+        range_ (str, optional): The time range for the data (default '1y' for one year).
+        interval (str, optional): The data interval (default '1d' for daily).
+
+    Returns:
+        dict or None: Parsed JSON data from Yahoo Finance API if successful, otherwise None.
+    """
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range={range_}&interval={interval}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return None
+
+    return response.json()
 
 def post_stock_data(stock_id, ticker, period):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+    """
+    Fetches historical stock data from Yahoo Finance and inserts it into the dbo.stock_data table.
 
-        print(f"Fetching data for ticker: {ticker}, period: {period}")
-        ticker_data = yf.Ticker(ticker)
-        historical_data = ticker_data.history(period=period)
+    Args:
+        stock_id (int): The database ID of the stock.
+        ticker (str): The stock ticker symbol.
+        period (str): The historical data period (e.g., '1y', '6mo', etc.).
 
-        if historical_data.empty:
-            print(f"No historical data found for ticker: {ticker}")
-            return
+    Behavior:
+        - Fetches JSON data from Yahoo Finance.
+        - Parses the timestamps and OHLCV (Open, High, Low, Close, Volume) data.
+        - Inserts each daily data point into the stock_data table with the current timestamp.
+        - Prints status messages to track progress.
+    """
+    print(f"Fetching data for ticker: {ticker}, period: {period}")
+    json_data = fetch_yahoo_data(ticker, range_=period)
 
-        for date, row in historical_data.iterrows():
-            query = """
-                INSERT INTO dbo.stock_data (stock_id, [date], open_price, close_price, high_price, low_price, volume, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """
-            values = (
-                stock_id, date.strftime('%Y-%m-%d'), row['Open'], row['Close'],
-                row['High'], row['Low'], row['Volume'], datetime.now()
-            )
-            cursor.execute(query, values)
-            print(f"Data inserted for {ticker} on {date.strftime('%Y-%m-%d')}")
+    if not json_data or "chart" not in json_data or "result" not in json_data["chart"]:
+        print(f"No valid historical data found for ticker: {ticker}")
+        return
 
-        conn.commit()
-        print(f"Data insertion completed for ticker: {ticker}")
+    result = json_data["chart"]["result"][0]
+    timestamps = result["timestamp"]
+    indicators = result["indicators"]["quote"][0]
 
-        cursor.close()
-        conn.close()
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    for i, ts in enumerate(timestamps):
+        date = datetime.utcfromtimestamp(ts).strftime('%Y-%m-%d')
+        open_price = indicators.get("open", [None])[i]
+        close_price = indicators.get("close", [None])[i]
+        high_price = indicators.get("high", [None])[i]
+        low_price = indicators.get("low", [None])[i]
+        volume = indicators.get("volume", [None])[i]
+
+        query = """
+            INSERT INTO dbo.stock_data (stock_id, [date], open_price, close_price, high_price, low_price, volume, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        values = (
+            stock_id, date, open_price, close_price,
+            high_price, low_price, volume, datetime.now()
+        )
+        cursor.execute(query, values)
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()

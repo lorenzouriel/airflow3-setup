@@ -1,7 +1,7 @@
-import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from .backend.database import get_stocks, post_stock_data
+import time
 
 load_dotenv()
 
@@ -14,17 +14,14 @@ def load_stock_historical():
 
     for stock in stocks:
         stock_id, ticker, name, currency, created_at = stock
-        print(f"Checking data for {ticker} ({name})...")
 
-        current_time = datetime.now()
-
-        if current_time - created_at <= timedelta(days=1):
-            print(f"Loading historical data for {ticker} ({name})...")
+        if datetime.now() - created_at <= timedelta(days=1):
             post_stock_data(stock_id, ticker, period="1y")
+            time.sleep(5)
         else:
-            print(f"Skipping historical data for {ticker} ({name}) as created_at is older than 24 hours.")
+            print(f"[INFO] Skipping {ticker} ({name}): created_at is older than 24 hours.")
 
-    print("Historical stock data loading process completed.")
+    print("[DONE] Historical stock data loading completed.")
 
 if __name__ == "__main__":
     load_stock_historical()

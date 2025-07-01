@@ -8,14 +8,14 @@ from include.stocks_historical import load_stock_historical
 from datetime import datetime
 
 @dag(
-    dag_id="stocks-daily",
+    dag_id="stocks_data_pipeline",
     description="Pipeline to run historical and daily stock data loading tasks",
-    start_date=datetime(2025, 1, 10),
-    schedule="0 0 * * *",  # ✅ corrigido
+    start_date=datetime(2025, 1, 1),
+    schedule="0 0 * * *",
     catchup=False
 )
-def stocks_data():
 
+def stocks_data():
     @task(task_id='load_stock_historical')
     def task_load_stock_historical():
         load_stock_historical() 
@@ -29,6 +29,6 @@ def stocks_data():
     t1 = task_load_stock_historical()
     t2 = task_load_stock_daily()
 
-    t1 >> t2  
+    t1 >> t2
 
 stocks_data()

@@ -30,9 +30,6 @@ USER airflow
 # This file should be in the same directory as the Dockerfile
 COPY requirements.txt /requirements.txt
 
-# Copy .env file
-COPY include/backend/.env /opt/airflow/include/backend/.env
-
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /requirements.txt --verbose
 

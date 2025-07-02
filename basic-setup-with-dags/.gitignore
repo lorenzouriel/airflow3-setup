@@ -6,6 +6,7 @@ __pycache__/
 *.sqlite3
 *.log
 *.env
+.env
 *.DS_Store
 
 # Ignore Python virtual environments

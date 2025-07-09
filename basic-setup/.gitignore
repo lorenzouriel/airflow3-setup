@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+.env
+*.DS_Store
+
+# Ignore Python virtual environments
+.venv/
+venv/

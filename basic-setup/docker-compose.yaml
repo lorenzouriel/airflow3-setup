@@ -19,19 +19,13 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET}
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
-    # AIRFLOW__METRICS__STATSD_ON: "True"
-    # AIRFLOW__METRICS__STATSD_HOST: "statsd-exporter"
-    # AIRFLOW__METRICS__STATSD_PORT: "9125"
-    # AIRFLOW__METRICS__STATSD_PREFIX: "airflow"
-    # AIRFLOW__METRICS__STATSD_PLUGIN_CLASS: 'airflow.providers.prometheus.metrics.prometheus_statsd_exporter.PrometheusStatsdExporter'
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ${AIRFLOW_PROJ_DIR:-.}/dbt:/opt/airflow/dbt
-
+    - ${AIRFLOW_PROJ_DIR:-.}/include:/opt/airflow/include
 
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
@@ -88,8 +82,6 @@ services:
       retries: 5
       start_period: 30s
     restart: always
-    # environment:
-    #   - STATSD_DEBUG=true
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:

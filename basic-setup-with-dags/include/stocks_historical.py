@@ -1,9 +1,6 @@
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from .backend.database import get_stocks, post_stock_data
 import time
-
-load_dotenv()
 
 def load_stock_historical():
     """

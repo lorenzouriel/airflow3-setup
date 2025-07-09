@@ -6,7 +6,8 @@ import pyodbc
 
 load_dotenv()
 
-# Database configuration loaded from environment variables
+# Database configuration
+# Ensure these environment variables are set in your .env file or system environment
 DB_CONFIG = {
     'server': os.getenv('DB_SERVER'),
     'database': os.getenv('DB_NAME'),

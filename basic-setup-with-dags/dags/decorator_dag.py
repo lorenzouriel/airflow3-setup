@@ -14,10 +14,14 @@ from include.stocks_historical import load_stock_historical
 # # Used to define the DAG's start date
 from datetime import datetime
 
+default_args = {
+    'owner': 'airflow', # Owner of the DAG
+}
 # Define the DAG using the @dag decorator
 @dag(
     dag_id="stocks_data_pipeline", # Unique identifier for this DAG
     description="Pipeline to run historical and daily stock data loading tasks",
+    default_args=default_args, # Default arguments for the DAG
     start_date=datetime(2025, 1, 1), # The first date this DAG is valid from
     schedule="0 0 * * *", # Cron schedule expression to run daily at midnight
     catchup=False # Prevents backfilling of previous runs when DAG is deployed

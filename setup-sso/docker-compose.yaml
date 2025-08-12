@@ -26,6 +26,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/include:/opt/airflow/include
+    - ${AIRFLOW_PROJ_DIR:-.}/config/webserver_config.py:/opt/airflow/webserver_config.py
 
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:

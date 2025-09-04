@@ -19,6 +19,14 @@ x-airflow-common:
     AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET}
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+    AIRFLOW__EMAIL__EMAIL_BACKEND: airflow.utils.email.send_email_smtp
+    AIRFLOW__SMTP__SMTP_HOST: '${SMTP_HOST}'
+    AIRFLOW__SMTP__SMTP_STARTTLS: '${SMTP_STARTTLS}'
+    AIRFLOW__SMTP__SMTP_SSL: '${SMTP_SSL}'
+    AIRFLOW__SMTP__SMTP_USER: '${SMTP_USER}'
+    AIRFLOW__SMTP__SMTP_PASSWORD: '${SMTP_PASSWORD}'
+    AIRFLOW__SMTP__SMTP_PORT: '${SMTP_PORT}'
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: '${SMTP_MAIL_FROM}'
 
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
@@ -26,6 +34,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/include:/opt/airflow/include
+    - ${AIRFLOW_PROJ_DIR:-.}/config/webserver_config.py:/opt/airflow/webserver_config.py
 
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
@@ -66,7 +75,6 @@ services:
       retries: 5
       start_period: 30s
     restart: always
-    
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:

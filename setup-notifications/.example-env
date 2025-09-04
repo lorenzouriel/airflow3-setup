@@ -1,0 +1,36 @@
+# PostgreSQL
+POSTGRES_USER=airflow
+POSTGRES_PASSWORD=airflow
+POSTGRES_DB=airflow
+POSTGRES_HOST=postgres
+
+# Airflow User (created during init)
+_AIRFLOW_WWW_USER_USERNAME=airflow-dev
+_AIRFLOW_WWW_USER_PASSWORD=airflow-dev
+
+# Airflow UID (optional, used for file permissions)
+AIRFLOW_UID=50000
+
+# Airflow configuration
+AIRFLOW__API_AUTH__JWT_SECRET=
+AIRFLOW__CORE__FERNET_KEY=
+
+# AirFlow SSO
+AIRFLOW_SSO_AAD_CLIENT_ID=
+AIRFLOW_SSO_AAD_CLIENT_SECRET=
+AIRFLOW_SSO_AAD_TENANT_ID=
+
+# Microsoft Teams Webhook URL
+TEAMS_WEBHOOK_URL=
+
+# Slack Webhook URL
+SLACK_WEBHOOK_URL=
+
+# SMTP Configuration for email alerts
+SMTP_HOST=smtp.gmail.com
+SMTP_STARTTLS=True
+SMTP_SSL=False
+SMTP_USER=****@gmail.com
+SMTP_PASSWORD=****
+SMTP_PORT=587
+SMTP_MAIL_FROM=****@gmail.com

@@ -4,7 +4,7 @@ from datetime import datetime
 
 # To test email sending, run the following command in your terminal:
 # docker exec -it setup-sso-airflow-apiserver-1 bash
-# python -c "from airflow.utils.email import send_email; send_email('earthflow42@gmail.com', 'Test', 'This is a test')"
+# python -c "from airflow.utils.email import send_email; send_email('earthflow@gmail.com', 'Test', 'This is a test')"
 
 def failure_email(context):
     ti = context['task_instance']

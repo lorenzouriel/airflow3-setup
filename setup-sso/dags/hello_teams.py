@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# TEAMS_WEBHOOK_URL = os.getenv('TEAMS_WEBHOOK_URL')
-TEAMS_WEBHOOK_URL = "https://defaultab65eb9cd51f43c8adb791dc0c21f7.72.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/5d88079648694aeabc9d674dc4009202/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kAz31WBjR_pgeJpMs53B--y9jX156YD-CS-bPjQeN-k"
+TEAMS_WEBHOOK_URL = os.getenv('TEAMS_WEBHOOK_URL')
 
 
 def task_fail_alert(context):

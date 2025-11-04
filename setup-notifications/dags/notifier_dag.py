@@ -1,6 +1,6 @@
 from airflow.decorators import dag, task
 from datetime import datetime
-from notifier import failure_email, slack_fail_alert, task_fail_alert_teams
+from dags.notifier import failure_email, slack_fail_alert, task_fail_alert_teams
 
 @dag(
     dag_id="example_alerts",

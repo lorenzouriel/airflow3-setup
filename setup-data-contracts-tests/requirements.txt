@@ -1,0 +1,33 @@
+apache-airflow[statsd]==3.0.0
+airflow-provider-duckdb==0.1.0
+apache-airflow-providers-postgres==5.13.1
+apache-airflow-providers-common-sql==1.26.0
+apache-airflow-providers-fab[common.compat]==2.0.2
+apache-airflow-providers-apache-kafka==1.9.0
+apache-airflow-providers-microsoft-mssql
+
+astronomer-cosmos==1.10.1
+
+authlib==1.5.2
+asgiref==3.8.1
+
+# Database connectors
+pymssql==2.2.11
+pyodbc==5.0.1
+
+# Data validation and contracts
+pydantic>=2.11.0
+great-expectations==0.18.8
+
+# Data processing
+pandas==2.1.4
+numpy==1.26.2
+
+# HTTP/API requests
+requests==2.31.0
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+pytest-airflow==0.0.1

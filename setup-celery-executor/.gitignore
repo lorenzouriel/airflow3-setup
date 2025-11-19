@@ -1,0 +1,15 @@
+.env
+venv/
+.venv
+__pycache__/
+*.pyc
+
+logs/
+
+include/knowledge_base/
+
+.astro/
+
+__pycache__/
+*.pyc
+venv/
